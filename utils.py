@@ -1,9 +1,17 @@
 import socket
 from constants import HEADER_LENGTH,BUFFER_SIZE,RESPONSE_CODES
+from exceptions import MessageLengthError
 
 def query_builder(type,data):
-    # to be implemented
-    pass
+
+    query = " " + " ".join([type] + list(map(str,data)))
+
+    if(len(query)>9995):
+        raise MessageLengthError("Maximum message length exceeded")
+    else:
+        query = str(len(query) + HEADER_LENGTH).zfill(4) + query
+
+    return bytes(query,"utf-8")
 
 def query_parser(query):
     # to be implemented
