@@ -1,6 +1,9 @@
-
 class CLI:
 
     def run(self):
-        # to be implemented
-        pass
+        while True:
+            user_input  = input("Enter Command:")
+            if user_input=="exit":
+                break
+            else:
+                pass
