@@ -43,8 +43,22 @@ class Node:
         self.disconnect_from_network()
 
     def reg_in_bs(self):
-        # to be implemented
-        pass
+        
+        query = query_builder("REG",data=[self.ip,self.port,self.username])
+        data = udp_send_recv(self.bs_ip,self.bs_port,query)
+
+        try:
+            res_type,data = query_parser(data)
+        except Exception as e:
+            print("Error:",str(e))
+            sys.exit('Exiting, Couldn\'t connect to BS')
+        else:
+            if res_type == "REGOK":
+                for i in range(0,len(data),2):
+                    self.routing_table.add(data[i],data[i+1])
+            else:
+                print("Error: Invalid response from BS")
+                sys.exit('Exiting, Couldn\'t connect to BS')
 
 
     def unreg_from_bs(self):
