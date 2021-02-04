@@ -47,6 +47,7 @@ class Node:
 
         query = query_builder("REG", data=[self.udp_ip, self.udp_port, self.username])
         data = udp_send_recv(self.bs_ip, self.bs_port, query)
+        
         try:
             res_type, data = query_parser(data)
         except Exception as e:

@@ -2,7 +2,6 @@ import socket
 from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
 from utils import query_builder, udp_send_recv
-
 from routing import RoutingTable
 
 import constants as CONST
