@@ -46,6 +46,8 @@ def udp_send_recv(ip, port, data, recieve=True):
     if recieve:
         return udp_recv(s)
 
+    s.close()
+
 
 if __name__ == "__main__":
     # quick unit tests

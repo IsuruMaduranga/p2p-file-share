@@ -62,8 +62,14 @@ class Node:
                 sys.exit("Exiting, Couldn't connect to BS")
 
     def unreg_from_bs(self):
-        # to be implemented
-        pass
+
+        query = query_builder("UNREG",data=[self.udp_ip,self.udp_port,self.username])
+        res = udp_send_recv(self.bs_ip,self.bs_port,query)
+
+        try:
+            res_type,res = query_parser(res)
+        except Exception as e:
+            pass
 
     def connect_to_network(self):
         # to be implemented
