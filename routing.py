@@ -11,6 +11,14 @@ class RoutingTable(metaclass=Singleton):
     def __init__(self): 
         self.table = []
 
+    # make this method atomic
     def add(self,ip,port):
         self.table.append((ip,port))
+    
+    def get(self):
+        return self.table
+    
+    # make this method atomic
+    def remove(self,node):
+        return self.table.remove(node)
     
