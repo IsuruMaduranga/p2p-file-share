@@ -1,4 +1,4 @@
-from cli import CLI
+#from cli import CLI
 from server import UDPServer
 from api import RESTServer
 from utils import query_builder, udp_send_recv, query_parser
@@ -19,7 +19,7 @@ class Node:
         self.bs_port = bs_port
 
         self.routing_table = RoutingTable()
-        self.cli = CLI()
+        #self.cli = CLI()
         self.udp_server = UDPServer(self.udp_ip, self.udp_port)
         self.rest_server = RESTServer(self.flask_port)
 
@@ -35,7 +35,7 @@ class Node:
         self.rest_server.run()
 
         # starting cli in the main process
-        self.cli.run()
+        #self.cli.run()
 
         self.udp_server.terminate()
         self.rest_server.terminate()
@@ -78,8 +78,9 @@ class Node:
     def disconnect_from_network(self):
         # to be implemented
         pass
-
+'''
 
 if __name__ == "__main__":
     node = Node("127.0.0.1", 5555, 5001, "node2", "127.0.0.1", 55555)
     node_data = node.run()
+'''
