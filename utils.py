@@ -13,18 +13,18 @@ def query_builder(query_type, data):
 
     return bytes(query, "utf-8")
 
-
 def query_parser(query):
+    query = query.decode("utf-8")
     query = query.split(" ")
-    res_type = query[0]
-    res_code = query[1]
+    res_type = query[1]
+    res_code = query[2]
 
     if res_type in RESPONSE_CODES and res_code in RESPONSE_CODES[res_type]:
 
         code = RESPONSE_CODES[res_type][res_code]
 
         if code["stat"]:
-            return query[0], query[2:]
+            return query[1], query[3:]
         else:
             raise ResponseError(code["msg"])
     else:
@@ -34,7 +34,7 @@ def query_parser(query):
 def udp_recv(sock):
     data = sock.recv(BUFFER_SIZE)
     sock.close()
-    return data.decode("utf-8")[5:]
+    return data
 
 
 def udp_send_recv(ip, port, data, recieve=True):
