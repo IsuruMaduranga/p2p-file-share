@@ -1,9 +1,10 @@
-
 class MessageLengthError(Exception):
     pass
 
+
 class ResponseError(Exception):
     pass
+
 
 class InvalidQueryError(Exception):
     def __init__(self, msg="Invalid Query", *args, **kwargs):
