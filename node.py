@@ -19,7 +19,7 @@ class Node:
         self.routing_table = RoutingTable()
         self.cli = CLI()
         self.udp_server = UDPServer()
-        self.rest_server = RESTServer()
+        self.rest_server = RESTServer(port)
 
     
     def run(self):
