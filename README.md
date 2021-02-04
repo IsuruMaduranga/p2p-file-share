@@ -2,8 +2,8 @@
 
 ### Requirements
 
-1.Java
-2.Python 3+
+1. Java
+2. Python 3+
 
 ### Running the Bootstrap server
 

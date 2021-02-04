@@ -28,17 +28,17 @@ class Node:
         self.reg_in_bs()
         self.connect_to_network()
 
-        # strating udp server in a new thread
+        # strating udp server in a new process
         self.udp_server.run()
 
-        # starting rest server in a new thread
+        # starting rest server in a new process
         self.rest_server.run()
 
-        # starting cli in the main thread
+        # starting cli in the main process
         self.cli.run()
 
-        self.udp_server.join()
-        self.rest_server.join()
+        self.udp_server.terminate()
+        self.rest_server.terminate()
 
         self.unreg_from_bs()
         self.disconnect_from_network()
