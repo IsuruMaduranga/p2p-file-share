@@ -7,10 +7,11 @@ import sys
 
 class Node:
 
-    def __init__ (self,ip,port,username,bs_ip,bs_port):
+    def __init__ (self, udp_ip, udp_port, flask_port, username, bs_ip, bs_port):
 
-        self.ip = ip
-        self.port = port
+        self.udp_ip = udp_ip
+        self.udp_port = udp_port
+        self.flask_port = flask_port
         self.username = username
 
         self.bs_ip = bs_ip
@@ -18,8 +19,8 @@ class Node:
 
         self.routing_table = RoutingTable()
         self.cli = CLI()
-        self.udp_server = UDPServer()
-        self.rest_server = RESTServer(port)
+        self.udp_server = UDPServer(self.udp_ip, self.udp_port)
+        self.rest_server = RESTServer(self.flask_port)
 
     
     def run(self):
@@ -44,7 +45,7 @@ class Node:
 
     def reg_in_bs(self):
         
-        query = query_builder("REG",data=[self.ip,self.port,self.username])
+        query = query_builder("REG",data=[self.udp_ip,self.udp_port,self.username])
         data = udp_send_recv(self.bs_ip,self.bs_port,query)
 
         try:
@@ -78,5 +79,5 @@ class Node:
 
 if __name__ == "__main__":
 
-    node = Node("127.0.0.1",5001,"node2","127.0.0.1",55555)
+    node = Node("127.0.0.1",5555,5001,"node2","127.0.0.1",55555)
     data = node.run()
