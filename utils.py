@@ -76,5 +76,3 @@ if __name__ == "__main__":
     # quick unit tests
     print(query_builder("REG", ["129.82.123.45", "5001", "1234abcd"]).decode("utf-8"))
     print(query_builder("REGOK", ["2", "129.82.123.45", "5001", "64.12.123.190", "34001"]).decode("utf-8"))
-
-    generate_random_file(3, "test.txt")
