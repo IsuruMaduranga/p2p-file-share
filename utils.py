@@ -1,6 +1,8 @@
+import os
+import socket
+
 from exceptions import MessageLengthError, ResponseError, InvalidQueryError
 from constants import HEADER_LENGTH, BUFFER_SIZE, RESPONSE_CODES
-import socket
 
 
 def query_builder(query_type, data):
@@ -49,7 +51,30 @@ def udp_send_recv(ip, port, data, recieve=True):
     s.close()
 
 
+def generate_byte_array(array_size):
+    lower_bound = ord(b'0')
+    length = 10
+    # print(array_size)
+    # Generate a random array of length array_size and assign integers based on the array
+    byte_array = bytearray(os.urandom(array_size))
+    for i, b in enumerate(byte_array):
+        byte_array[i] = lower_bound + b % length
+
+    return byte_array
+
+
+def generate_random_file(file_name, file_size):
+    num_bytes = 1024 * 1024 * file_size
+    random_integer = generate_byte_array(num_bytes)
+
+    if os.path.exists("data"):
+        with open(os.path.join("data", file_name), "wb") as out_file:
+            out_file.write(random_integer)
+
+
 if __name__ == "__main__":
     # quick unit tests
     print(query_builder("REG", ["129.82.123.45", "5001", "1234abcd"]).decode("utf-8"))
     print(query_builder("REGOK", ["2", "129.82.123.45", "5001", "64.12.123.190", "34001"]).decode("utf-8"))
+
+    generate_random_file(3, "test.txt")
