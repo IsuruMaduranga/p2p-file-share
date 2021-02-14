@@ -1,8 +1,10 @@
 import socket
 from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
-from utils import query_builder, udp_send_recv
+
 from routing import RoutingTable
+from utils import query_builder, udp_send_recv
+from request_handler import process_request
 
 import constants as CONST
 
@@ -31,41 +33,35 @@ class UDPServer:
 
     def _process_request(self, msg, addr):
         msg = msg.decode("utf-8")
-        toks = msg.split()
+        tokens = msg.split()
 
-        if toks[1] == "JOIN":
-            self.routing_table.add(toks[2], toks[3])
+        processed_request = process_request(tokens)
+
+        if processed_request['request'] == "JOIN":
+            self.routing_table.add(tokens[2], tokens[3])
             response = query_builder("JOINOK", ["0"])
             udp_send_recv(addr[0], addr[1], response, recieve=False)
 
-        elif toks[1] == "LEAVE":
+        elif processed_request['request'] == "LEAVE":
             for node in self.routing_table.get():
-                if node[2] == int(toks[3]):
+                if node[2] == int(tokens[3]):
                     self.routing_table.remove(node)
                     break
 
             response = query_builder("LEAVEOK", ["0"])
             udp_send_recv(addr[0], addr[1], response, recieve=False)
 
-        elif toks[1] == "SER":
-            current_hop = int(toks[5])
-            files_found = 0
-            file_names = ""
-
-            '''  TODO
-            First search in the local storage, if found increment the fileFound varibale,
-			for file in FD.files:
-				if toks[4].replace("-", " ") in file:
-					filesFound+=1
-					fileNames += " " + file
-            '''
+        elif processed_request['request'] == "SER":
+            files_found = processed_request['file_found']
+            hop_count = processed_request['hop_count']
 
             # if files are found send response back, no need to ask from his neighbours
             if files_found > 0:
-                response = query_builder("SEROK", [files_found, self.ip, self.port, current_hop, file_names])
+                response = query_builder("SEROK",
+                                         [files_found, self.ip, self.port, hop_count, processed_request['file_names']])
                 udp_send_recv(addr[0], addr[1], response, recieve=False)
 
-            elif current_hop > 0:
-                request = query_builder("SER", [toks[2], toks[3], toks[4], current_hop - 1])
+            elif hop_count > 0:
+                request = query_builder("SER", [tokens[2], tokens[3], tokens[4], hop_count])
                 for node in self.routing_table.get():
                     udp_send_recv(node[0], node[1], request, recieve=False)

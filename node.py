@@ -1,9 +1,11 @@
-#from cli import CLI
+import sys
+import random
+
+from cli import CLI
 from server import UDPServer
 from api import RESTServer
-from utils import query_builder, udp_send_recv, query_parser
+from utils import query_builder, udp_send_recv, query_parser, generate_random_file
 from routing import RoutingTable
-import sys
 
 
 class Node:
@@ -24,6 +26,9 @@ class Node:
         self.rest_server = RESTServer(self.flask_port)
 
     def run(self):
+
+        # generate random files to be shared
+        self.generate_files(random.randint(2, 5))
 
         self.reg_in_bs()
         self.connect_to_network()
@@ -63,11 +68,11 @@ class Node:
 
     def unreg_from_bs(self):
 
-        query = query_builder("UNREG",data=[self.udp_ip,self.udp_port,self.username])
-        res = udp_send_recv(self.bs_ip,self.bs_port,query)
+        query = query_builder("UNREG", data=[self.udp_ip, self.udp_port, self.username])
+        res = udp_send_recv(self.bs_ip, self.bs_port, query)
 
         try:
-            res_type,res = query_parser(res)
+            res_type, res = query_parser(res)
         except Exception as e:
             pass
 
@@ -78,9 +83,20 @@ class Node:
     def disconnect_from_network(self):
         # to be implemented
         pass
-'''
+
+    @staticmethod
+    def generate_files(num_files):
+        print(f"Generating {num_files} files")
+
+        file_names = []
+        with open("data/File Names.txt", 'r') as in_file:
+            for line in in_file:
+                file_names.append(line.strip())
+        random.shuffle(file_names)
+
+        for i in range(num_files):
+            generate_random_file(file_names[i], random.randint(2, 10))
 
 if __name__ == "__main__":
     node = Node("127.0.0.1", 5555, 5001, "node2", "127.0.0.1", 55555)
     node_data = node.run()
-'''

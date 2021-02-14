@@ -14,7 +14,6 @@ style = style_from_dict({
     Token.Question: '',
 })
 
-
 class CLI:
     '''
     def run(self):
@@ -127,12 +126,3 @@ class CLI:
             print("PLEASE SELECT ONLY ONE COMMAND!")
         else:
             self.collectData(answer['command'][0])
-            
-
-
-if __name__ == "__main__":
-
-    node = Node("127.0.0.1",5555,5001,"node2","127.0.0.1",55555)
-    cli_instance = CLI()
-    cli_instance.run()
-    #data = node.run()
