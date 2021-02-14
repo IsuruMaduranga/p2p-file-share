@@ -1,5 +1,6 @@
 from art import tprint
 
+
 class CLI:
 
     def run(self):
