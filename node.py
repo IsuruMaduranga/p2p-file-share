@@ -24,7 +24,7 @@ class Node:
         self.routing_table = RoutingTable()
         self.cli = CLI(self.dir, self.udp_ip, self.udp_port)
         self.udp_server = UDPServer(self.udp_ip, self.udp_port, self.dir, self.flask_port)
-        self.rest_server = RESTServer(self.flask_port)
+        self.rest_server = RESTServer(self.flask_port, self.dir)
 
     def run(self):
 

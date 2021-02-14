@@ -1,6 +1,7 @@
 import os
 import random
 from utils import query_builder,udp_send_recv
+import requests
 
 def show_files(base):
     file_names = []
@@ -9,6 +10,12 @@ def show_files(base):
         for file in available_files:
             file_names.append(file)
     return file_names
+
+def downloadFile(filename, ip, port, dir):
+    filename = filename.replace(" ","-")
+    url = 'http://' + ip + ":" + port + "/" + filename
+    r = requests.get(url, allow_redirects=True)
+    open(dir + "/" + filename , 'wb').write(r.content)
 
 def search_file(base, file_name):
     file_name = file_name.lower().split(" ")
