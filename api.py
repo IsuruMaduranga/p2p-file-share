@@ -19,7 +19,7 @@ class RESTServer(object):
     app = None
 
     def __init__(self, port, endpoint='/<file>', endpoint_name='download file endpoint'):
-        self.port = port
+        self.port = int(port)
         self.app = Flask("file-server")
         self.app.add_url_rule(endpoint, endpoint_name, EndpointAction())
         self.server_process = Process(target=self.async_run)

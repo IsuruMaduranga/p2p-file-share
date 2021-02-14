@@ -34,16 +34,15 @@ def query_parser(query):
 
 
 def udp_recv(sock):
-    data = sock.recv(BUFFER_SIZE)
+    data, addr = sock.recvfrom(BUFFER_SIZE)
     sock.close()
     return data
 
 
 def udp_send_recv(ip, port, data, recieve=True):
+    port = int(port)
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((ip, port))
-    s.send(data)
-
+    s.sendto(data, (ip, port))
     data = ""
     if recieve:
         return udp_recv(s)
@@ -63,14 +62,13 @@ def generate_byte_array(array_size):
     return byte_array
 
 
-def generate_random_file(file_name, file_size):
+def generate_random_file(dir,file_name, file_size):
     num_bytes = 1024 * 1024 * file_size
     random_integer = generate_byte_array(num_bytes)
 
-    if os.path.exists("data"):
-        with open(os.path.join("data", file_name), "wb") as out_file:
+    if os.path.exists(dir):
+        with open(os.path.join(dir + "/" + file_name), "wb") as out_file:
             out_file.write(random_integer)
-
 
 if __name__ == "__main__":
     # quick unit tests
