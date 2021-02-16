@@ -1,7 +1,8 @@
 import os
 import random
-from utils import query_builder,udp_send_recv
 import requests
+from utils import query_builder, udp_send_recv
+
 
 def show_files(base):
     file_names = []
@@ -11,11 +12,13 @@ def show_files(base):
             file_names.append(file)
     return file_names
 
-def downloadFile(filename, ip, port, dir):
-    filename = filename.replace(" ","-")
+
+def download_file(filename, ip, port, dir):
+    filename = filename.replace(" ", "-")
     url = 'http://' + ip + ":" + port + "/" + filename
     r = requests.get(url, allow_redirects=True)
-    open(dir + "/" + filename , 'wb').write(r.content)
+    open(dir + "/" + filename, 'wb').write(r.content)
+
 
 def search_file(base, file_name):
     file_name = file_name.lower().split(" ")
@@ -35,11 +38,8 @@ def search_file(base, file_name):
                 file_names.append(file)
 
     return file_found, " ".join(file_names)
-    
+
+
 def search_file_remote(ip, port, filename):
-    request = query_builder("SER", [ip, port, filename, 3])  #NO of HOPS = 3
+    request = query_builder("SER", [ip, port, filename, 3])  # NO of HOPS = 3
     udp_send_recv(ip, port, request, recieve=False)
-
-
-
-
