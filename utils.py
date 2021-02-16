@@ -15,6 +15,7 @@ def query_builder(query_type, data):
 
     return bytes(query, "utf-8")
 
+
 def query_parser(query):
     query = query.decode("utf-8")
     query = query.split(" ")
@@ -62,13 +63,14 @@ def generate_byte_array(array_size):
     return byte_array
 
 
-def generate_random_file(dir,file_name, file_size):
+def generate_random_file(dir, file_name, file_size):
     num_bytes = 1024 * 1024 * file_size
     random_integer = generate_byte_array(num_bytes)
 
     if os.path.exists(dir):
         with open(os.path.join(dir + "/" + file_name), "wb") as out_file:
             out_file.write(random_integer)
+
 
 if __name__ == "__main__":
     # quick unit tests

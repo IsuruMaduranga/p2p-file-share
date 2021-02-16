@@ -4,10 +4,11 @@ import os
 import shutil
 
 from cli import CLI
-from server import UDPServer
 from api import RESTServer
-from utils import query_builder, udp_send_recv, query_parser, generate_random_file
+from server import UDPServer
 from routing import RoutingTable
+from utils import query_builder, udp_send_recv, query_parser, generate_random_file
+
 
 class Node:
 
@@ -54,7 +55,7 @@ class Node:
 
         query = query_builder("REG", data=[self.udp_ip, self.udp_port, self.username])
         data = udp_send_recv(self.bs_ip, self.bs_port, query)
-        
+
         try:
             res_type, data = query_parser(data)
         except Exception as e:
@@ -79,7 +80,7 @@ class Node:
             pass
 
     def connect_to_network(self):
-        for ip,port in self.routing_table.get():
+        for ip, port in self.routing_table.get():
             query = query_builder("JOIN", data=[self.udp_ip, self.udp_port])
             data = udp_send_recv(ip, port, query)
             try:
@@ -87,25 +88,24 @@ class Node:
             except Exception as e:
                 print("Error:", str(e))
                 self.routing_table.remove((ip, port))
-            else: 
+            else:
                 if res_type == "JOINOK":
                     print("JOINED")
-                   
 
     def disconnect_from_network(self):
-        for ip,port in self.routing_table.get():
+        for ip, port in self.routing_table.get():
             query = query_builder("LEAVE", data=[self.udp_ip, self.udp_port])
             data = udp_send_recv(ip, port, query)
             try:
                 res_type, data = query_parser(data)
             except Exception as e:
                 print("Error:", str(e))
-            else: 
+            else:
                 if res_type == "LEAVEOK":
                     print("LEAVED")
-    
+
     def generate_files(self, num_files):
-        os.mkdir(self.dir) 
+        os.mkdir(self.dir)
 
         print(f"Generating {num_files} files")
 
@@ -117,6 +117,7 @@ class Node:
 
         for i in range(num_files):
             generate_random_file(self.dir, file_names[i], random.randint(2, 10))
+
 
 if __name__ == "__main__":
     args = sys.argv[1:]
