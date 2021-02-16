@@ -11,5 +11,28 @@ RESPONSE_CODES = {
         "9997": {"stat": False, "msg": "failed, registered to another user, try a different IP and port"},
         "9996": {"stat": False, "msg": " failed, can’t register. BS full"}
     },
-    "UNREG": {}
+    "UNROK": {
+        "0": {"stat": True, "msg": "successful"},
+        "9999": {"stat": False, "msg": "error while unregistering. IP and port may not be in the registry or command is incorrect."}
+    },
+    "JOINOK": {
+        "0": {"stat": True, "msg": "successful"},
+        "9999": {"stat": False, "msg": "error while adding new node to routing table"}
+    },
+    "LEAVEOK": {
+        "0": {"stat": True, "msg": "successful"},
+        "9999": {"stat": False, "msg": "error while removing node from routing table"}
+    },
+    "SEROK": {
+        "1": {"stat": True, "msg": "successful"}, # the key can be <=1 , thats why,  the key is number of files found 
+        "2": {"stat": True, "msg": "successful"},
+        "3": {"stat": True, "msg": "successful"},
+        "4": {"stat": True, "msg": "successful"},
+        "5": {"stat": True, "msg": "successful"},
+        "6": {"stat": True, "msg": "successful"},
+        "7": {"stat": True, "msg": "successful"},
+        "0": {"stat": False, "msg": "no matching results. Searched key is not in key table"},
+        "9999": {"stat": False, "msg": "failure due to node unreachable"},
+        "9998": {"stat": False, "msg": "some other error."}
+    }
 }

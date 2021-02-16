@@ -1,12 +1,13 @@
 import sys
 import random
+import os
+import shutil
 
 from cli import CLI
 from server import UDPServer
 from api import RESTServer
 from utils import query_builder, udp_send_recv, query_parser, generate_random_file
 from routing import RoutingTable
-
 
 class Node:
 
@@ -16,14 +17,14 @@ class Node:
         self.udp_port = udp_port
         self.flask_port = flask_port
         self.username = username
-
+        self.dir = "data/" + username
         self.bs_ip = bs_ip
         self.bs_port = bs_port
 
         self.routing_table = RoutingTable()
-        #self.cli = CLI()
-        self.udp_server = UDPServer(self.udp_ip, self.udp_port)
-        self.rest_server = RESTServer(self.flask_port)
+        self.cli = CLI(self.dir, self.udp_ip, self.udp_port)
+        self.udp_server = UDPServer(self.udp_ip, self.udp_port, self.dir, self.flask_port)
+        self.rest_server = RESTServer(self.flask_port, self.dir)
 
     def run(self):
 
@@ -40,19 +41,20 @@ class Node:
         self.rest_server.run()
 
         # starting cli in the main process
-        #self.cli.run()
+        self.cli.run()
 
         self.udp_server.terminate()
         self.rest_server.terminate()
 
         self.unreg_from_bs()
         self.disconnect_from_network()
+        shutil.rmtree(self.dir)
 
     def reg_in_bs(self):
 
         query = query_builder("REG", data=[self.udp_ip, self.udp_port, self.username])
         data = udp_send_recv(self.bs_ip, self.bs_port, query)
-
+        
         try:
             res_type, data = query_parser(data)
         except Exception as e:
@@ -77,15 +79,34 @@ class Node:
             pass
 
     def connect_to_network(self):
-        # to be implemented
-        pass
+        for ip,port in self.routing_table.get():
+            query = query_builder("JOIN", data=[self.udp_ip, self.udp_port])
+            data = udp_send_recv(ip, port, query)
+            try:
+                res_type, data = query_parser(data)
+            except Exception as e:
+                print("Error:", str(e))
+                self.routing_table.remove((ip, port))
+            else: 
+                if res_type == "JOINOK":
+                    print("JOINED")
+                   
 
     def disconnect_from_network(self):
-        # to be implemented
-        pass
+        for ip,port in self.routing_table.get():
+            query = query_builder("LEAVE", data=[self.udp_ip, self.udp_port])
+            data = udp_send_recv(ip, port, query)
+            try:
+                res_type, data = query_parser(data)
+            except Exception as e:
+                print("Error:", str(e))
+            else: 
+                if res_type == "LEAVEOK":
+                    print("LEAVED")
+    
+    def generate_files(self, num_files):
+        os.mkdir(self.dir) 
 
-    @staticmethod
-    def generate_files(num_files):
         print(f"Generating {num_files} files")
 
         file_names = []
@@ -95,8 +116,9 @@ class Node:
         random.shuffle(file_names)
 
         for i in range(num_files):
-            generate_random_file(file_names[i], random.randint(2, 10))
+            generate_random_file(self.dir, file_names[i], random.randint(2, 10))
 
 if __name__ == "__main__":
-    node = Node("127.0.0.1", 5555, 5001, "node2", "127.0.0.1", 55555)
+    args = sys.argv[1:]
+    node = Node(args[0], args[1], args[2], args[3], args[4], args[5])
     node_data = node.run()

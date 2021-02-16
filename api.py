@@ -11,17 +11,22 @@ log.setLevel(logging.ERROR)
 
 # return the requested file
 class EndpointAction(object):
+    def __init__(self,  dir):
+        self.dir = dir
+
     def __call__(self, file):
-        return send_file(file)
+        file = file.replace("-", " ")
+        return send_file(self.dir+"/"+file)
 
 
 class RESTServer(object):
     app = None
 
-    def __init__(self, port, endpoint='/<file>', endpoint_name='download file endpoint'):
-        self.port = port
+    def __init__(self, port, dir, endpoint='/<file>', endpoint_name='download file endpoint'):
+        self.port = int(port)
+        self.dir = dir
         self.app = Flask("file-server")
-        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction())
+        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(dir))
         self.server_process = Process(target=self.async_run)
 
     # start the flask server on separate thread

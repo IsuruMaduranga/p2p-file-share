@@ -15,18 +15,18 @@ def query_builder(query_type, data):
 
     return bytes(query, "utf-8")
 
-
 def query_parser(query):
+    query = query.decode("utf-8")
     query = query.split(" ")
-    res_type = query[0]
-    res_code = query[1]
+    res_type = query[1]
+    res_code = query[2]
 
     if res_type in RESPONSE_CODES and res_code in RESPONSE_CODES[res_type]:
 
         code = RESPONSE_CODES[res_type][res_code]
 
         if code["stat"]:
-            return query[0], query[2:]
+            return query[1], query[3:]
         else:
             raise ResponseError(code["msg"])
     else:
@@ -34,16 +34,15 @@ def query_parser(query):
 
 
 def udp_recv(sock):
-    data = sock.recv(BUFFER_SIZE)
+    data, addr = sock.recvfrom(BUFFER_SIZE)
     sock.close()
-    return data.decode("utf-8")[5:]
+    return data
 
 
 def udp_send_recv(ip, port, data, recieve=True):
+    port = int(port)
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((ip, port))
-    s.send(data)
-
+    s.sendto(data, (ip, port))
     data = ""
     if recieve:
         return udp_recv(s)
@@ -63,14 +62,13 @@ def generate_byte_array(array_size):
     return byte_array
 
 
-def generate_random_file(file_name, file_size):
+def generate_random_file(dir,file_name, file_size):
     num_bytes = 1024 * 1024 * file_size
     random_integer = generate_byte_array(num_bytes)
 
-    if os.path.exists("data"):
-        with open(os.path.join("data", file_name), "wb") as out_file:
+    if os.path.exists(dir):
+        with open(os.path.join(dir + "/" + file_name), "wb") as out_file:
             out_file.write(random_integer)
-
 
 if __name__ == "__main__":
     # quick unit tests
