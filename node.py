@@ -8,23 +8,24 @@ from server import UDPServer
 from api import RESTServer
 from utils import query_builder, udp_send_recv, query_parser, generate_random_file
 from routing import RoutingTable
+import configuration as cfg
 
 class Node:
 
-    def __init__(self, udp_ip, udp_port, flask_port, username, bs_ip, bs_port):
+    def __init__(self):
 
-        self.udp_ip = udp_ip
-        self.udp_port = udp_port
-        self.flask_port = flask_port
-        self.username = username
-        self.dir = "data/" + username
-        self.bs_ip = bs_ip
-        self.bs_port = bs_port
+        self.udp_ip = cfg.UdpServer['ip']
+        self.udp_port = cfg.UdpServer['port']
+        self.flask_port = cfg.FlaskServer['port']
+        self.username = cfg.Application['name']
+        self.dir =  cfg.Application['dir']
+        self.bs_ip = cfg.BoostrapServer['ip']
+        self.bs_port = cfg.BoostrapServer['port']
 
         self.routing_table = RoutingTable()
-        self.cli = CLI(self.dir, self.udp_ip, self.udp_port)
-        self.udp_server = UDPServer(self.udp_ip, self.udp_port, self.dir, self.flask_port)
-        self.rest_server = RESTServer(self.flask_port, self.dir)
+        self.cli = CLI()
+        self.udp_server = UDPServer(self.udp_ip, self.udp_port)
+        self.rest_server = RESTServer(self.flask_port)
 
     def run(self):
 
@@ -89,25 +90,19 @@ class Node:
                 self.routing_table.remove((ip, port))
             else: 
                 if res_type == "JOINOK":
-                    print("JOINED")
+                    pass
                    
 
     def disconnect_from_network(self):
         for ip,port in self.routing_table.get():
             query = query_builder("LEAVE", data=[self.udp_ip, self.udp_port])
-            data = udp_send_recv(ip, port, query)
-            try:
-                res_type, data = query_parser(data)
-            except Exception as e:
-                print("Error:", str(e))
-            else: 
-                if res_type == "LEAVEOK":
-                    print("LEAVED")
+            udp_send_recv(ip, port, query, recieve=False)
     
     def generate_files(self, num_files):
-        os.mkdir(self.dir) 
-
-        print(f"Generating {num_files} files")
+        if os.path.isdir(self.dir):
+            print("path already exist")
+        else:
+            os.mkdir(self.dir)
 
         file_names = []
         with open("data/File Names.txt", 'r') as in_file:
@@ -120,5 +115,10 @@ class Node:
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    node = Node(args[0], args[1], args[2], args[3], args[4], args[5])
+    cfg.UdpServer['port'] = args[0]
+    cfg.FlaskServer['port'] = args[1]
+    cfg.Application['name'] = args[2]
+    cfg.Application['dir'] = f"data/{args[2]}"
+
+    node = Node()
     node_data = node.run()

@@ -7,15 +7,14 @@ from utils import query_builder, udp_send_recv
 from FileHandler import search_file 
 
 import constants as CONST
+import configuration as cfg
 
 
 class UDPServer:
 
-    def __init__(self, ip, port, dir, flask_port):
+    def __init__(self, ip, port):
         self.ip = ip
         self.port = int(port)
-        self.flask_port = flask_port
-        self.dir = dir
         self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server.bind((self.ip, self.port))
         self.server_process = Process(target=self._start)
@@ -31,9 +30,9 @@ class UDPServer:
         executor = ThreadPoolExecutor(max_workers=3)
         while True:
             msg, addr = self.server.recvfrom(CONST.BUFFER_SIZE)
-            executor.submit(self._process_request, msg=msg, addr=addr, dir=self.dir, flask_ip=self.ip, flask_port=self.flask_port)
+            executor.submit(self._process_request, msg=msg, addr=addr)
 
-    def _process_request(self, msg, addr, dir, flask_ip, flask_port):
+    def _process_request(self, msg, addr):
         msg = msg.decode("utf-8")
         tokens = msg.split()
 
@@ -53,10 +52,10 @@ class UDPServer:
 
         elif tokens[1] == "SER":
             hops = int(tokens[5])
-            files_found, file_names = search_file(dir, tokens[4])
+            files_found, file_names = search_file(cfg.Application['dir'], tokens[4])
 
             if files_found > 0:
-                response = query_builder("SEROK", [files_found, flask_ip, flask_port, hops, file_names])
+                response = query_builder("SEROK", [files_found, cfg.FlaskServer['ip'], cfg.FlaskServer['port'], hops, file_names])
                 udp_send_recv(tokens[2], tokens[3], response, recieve=False)
 
             elif hops > 0:
@@ -65,4 +64,4 @@ class UDPServer:
                     udp_send_recv(node[0], node[1], request, recieve=False)
         
         elif tokens[1] == "SEROK":
-            print(">>>>>>>>>>>>>>>  Files Found: ", tokens[6:], " Flask IP: ", tokens[3], " Flask Port: ", tokens[4], "  <<<<<<<<<<<<<<<<<<<<")
+            print(">>>>>>>>>>>>>>>  Files Found: ", " ".join(tokens[6:]), " Flask IP: ", tokens[3], " Flask Port: ", tokens[4], "  <<<<<<<<<<<<<<<<<<<<")
