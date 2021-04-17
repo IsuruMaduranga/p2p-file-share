@@ -34,5 +34,8 @@ RESPONSE_CODES = {
         "0": {"stat": False, "msg": "no matching results. Searched key is not in key table"},
         "9999": {"stat": False, "msg": "failure due to node unreachable"},
         "9998": {"stat": False, "msg": "some other error."}
-    }
+    },
+    "ERROR": {
+        "0001": {"stat": False, "msg": "Request Timeout"}
+    },
 }

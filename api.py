@@ -2,6 +2,7 @@ import sys
 import logging
 from flask import Flask, Response, request, send_file
 from multiprocessing import Process
+import configuration as cfg
 
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
@@ -22,16 +23,17 @@ class EndpointAction(object):
 class RESTServer(object):
     app = None
 
-    def __init__(self, port, dir, endpoint='/<file>', endpoint_name='download file endpoint'):
+    def __init__(self, ip, port, endpoint='/<file>', endpoint_name='download file endpoint'):
+        self.ip = ip
         self.port = int(port)
-        self.dir = dir
+        self.dir = cfg.Application['dir']
         self.app = Flask("file-server")
-        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(dir))
+        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(self.dir))
         self.server_process = Process(target=self.async_run)
 
     # start the flask server on separate thread
     def async_run(self):
-        self.app.run(port=self.port)
+        self.app.run(host = self.ip, port = self.port)
 
     def run(self):
         self.server_process.start()

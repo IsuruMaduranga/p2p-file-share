@@ -8,7 +8,7 @@ from constants import HEADER_LENGTH, BUFFER_SIZE, RESPONSE_CODES
 def query_builder(query_type, data):
     query = " " + " ".join([query_type] + list(map(str, data)))
 
-    if len(query) > 9995:
+    if len(query) > BUFFER_SIZE - HEADER_LENGTH :
         raise MessageLengthError("Maximum message length exceeded")
     else:
         query = str(len(query) + HEADER_LENGTH).zfill(4) + query
@@ -34,9 +34,16 @@ def query_parser(query):
 
 
 def udp_recv(sock):
-    data, addr = sock.recvfrom(BUFFER_SIZE)
-    sock.close()
-    return data
+    sock.settimeout(2)
+    try:
+        data, addr = sock.recvfrom(BUFFER_SIZE)
+        sock.close()
+        return data
+    except socket.timeout:
+        sock.close()
+        data = " ERROR 0001"
+        data = str(len(data) + HEADER_LENGTH).zfill(4) + data
+        return bytes(data, "utf-8")
 
 
 def udp_send_recv(ip, port, data, recieve=True):
