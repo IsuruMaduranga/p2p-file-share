@@ -43,10 +43,9 @@ class UDPServer:
 
         elif tokens[1] == "LEAVE":
             for node in self.routing_table.get():
-                if node[2] == tokens[3]:
+                if node[1] == tokens[3]:
                     self.routing_table.remove(node)
                     break
-
             response = query_builder("LEAVEOK", ["0"])
             udp_send_recv(addr[0], addr[1], response, recieve=False)
 
