@@ -23,7 +23,8 @@ class EndpointAction(object):
 class RESTServer(object):
     app = None
 
-    def __init__(self, port, endpoint='/<file>', endpoint_name='download file endpoint'):
+    def __init__(self, ip, port, endpoint='/<file>', endpoint_name='download file endpoint'):
+        self.ip = ip
         self.port = int(port)
         self.dir = cfg.Application['dir']
         self.app = Flask("file-server")
@@ -32,7 +33,7 @@ class RESTServer(object):
 
     # start the flask server on separate thread
     def async_run(self):
-        self.app.run(port=self.port)
+        self.app.run(host = self.ip, port = self.port)
 
     def run(self):
         self.server_process.start()

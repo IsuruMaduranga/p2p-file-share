@@ -1,3 +1,8 @@
+import socket
+
+hostname = socket.gethostname()
+ip_address = socket.gethostbyname(hostname)
+
 Application = {
     "name" : "node1",
     "dir" : "data/node1"
@@ -9,11 +14,11 @@ BoostrapServer = {
 }
 
 UdpServer = {
-    "ip" : "127.0.0.1",
+    "ip" : ip_address,
     "port" : "5555"
 }
 
 FlaskServer = {
-    "ip" : "127.0.0.1",
+    "ip" : ip_address,
     "port" : "5000"
 }

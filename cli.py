@@ -2,9 +2,8 @@ from __future__ import print_function, unicode_literals
 from art import tprint
 from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
-from FileHandler import show_files, search_file_remote, downloadFile
+from FileHandler import show_files, search_file, downloadFile
 from prompt_toolkit.validation import Validator, ValidationError
-import configuration as cfg
 
 class NumberValidator(Validator):
     def validate(self, document):
@@ -26,24 +25,19 @@ style = style_from_dict({
 
 class CLI:
 
-    def __init__(self):
-        self.dir = cfg.Application['dir']
-        self.ip = cfg.UdpServer['ip']
-        self.port = cfg.UdpServer['port']
-
     def collectData(self,commandType):
         if (commandType == 'SEARCH FILE'):
            answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename'}], style=style)
-           search_file_remote(self.ip, self.port, answer['filename'])
+           search_file(answer['filename'], local_search = True)
         
         elif (commandType == 'DOWNLOAD FILE'):
             answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename'},
                             {'type': 'input','message': 'Enter IP Adress','name': 'ip'},
                             {'type': 'input','message': 'Enter Port','name': 'port', 'validate': NumberValidator}], style=style)
-            downloadFile(answer['filename'], answer['ip'], answer['port'], self.dir)
+            downloadFile(answer['filename'], answer['ip'], answer['port'])
         
         elif (commandType == 'SHOW MY FILES'):
-            for file in show_files(self.dir):
+            for file in show_files():
                 print(f">> {file}")
 
     def run(self):

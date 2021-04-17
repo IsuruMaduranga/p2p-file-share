@@ -52,7 +52,7 @@ class UDPServer:
 
         elif tokens[1] == "SER":
             hops = int(tokens[5])
-            files_found, file_names = search_file(cfg.Application['dir'], tokens[4])
+            files_found, file_names = search_file(tokens[4])
 
             if files_found > 0:
                 response = query_builder("SEROK", [files_found, cfg.FlaskServer['ip'], cfg.FlaskServer['port'], hops, file_names])
@@ -64,4 +64,4 @@ class UDPServer:
                     udp_send_recv(node[0], node[1], request, recieve=False)
         
         elif tokens[1] == "SEROK":
-            print(">>>>>>>>>>>>>>>  Files Found: ", " ".join(tokens[6:]), " Flask IP: ", tokens[3], " Flask Port: ", tokens[4], "  <<<<<<<<<<<<<<<<<<<<")
+            print(">>>>>  Files Found: ", " ".join(tokens[6:]), " Flask IP: ", tokens[3], " Flask Port: ", tokens[4], "  <<<<<<")

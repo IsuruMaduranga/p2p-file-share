@@ -16,6 +16,7 @@ class Node:
 
         self.udp_ip = cfg.UdpServer['ip']
         self.udp_port = cfg.UdpServer['port']
+        self.flask_ip = cfg.FlaskServer['ip']
         self.flask_port = cfg.FlaskServer['port']
         self.username = cfg.Application['name']
         self.dir =  cfg.Application['dir']
@@ -25,7 +26,7 @@ class Node:
         self.routing_table = RoutingTable()
         self.cli = CLI()
         self.udp_server = UDPServer(self.udp_ip, self.udp_port)
-        self.rest_server = RESTServer(self.flask_port)
+        self.rest_server = RESTServer(self.flask_ip, self.flask_port)
 
     def run(self):
 
@@ -73,7 +74,6 @@ class Node:
 
         query = query_builder("UNREG", data=[self.udp_ip, self.udp_port, self.username])
         res = udp_send_recv(self.bs_ip, self.bs_port, query)
-
         try:
             res_type, res = query_parser(res)
         except Exception as e:
@@ -96,7 +96,14 @@ class Node:
     def disconnect_from_network(self):
         for ip,port in self.routing_table.get():
             query = query_builder("LEAVE", data=[self.udp_ip, self.udp_port])
-            udp_send_recv(ip, port, query, recieve=False)
+            data = udp_send_recv(ip, port, query)
+            try:
+                res_type, data = query_parser(data)
+            except Exception as e:
+                print("Error:", str(e))
+            else: 
+                if res_type == "LEAVEOK":
+                    pass
     
     def generate_files(self, num_files):
         if os.path.isdir(self.dir):
