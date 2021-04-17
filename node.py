@@ -71,7 +71,6 @@ class Node:
                 sys.exit("Exiting, Couldn't connect to BS")
 
     def unreg_from_bs(self):
-
         query = query_builder("UNREG", data=[self.udp_ip, self.udp_port, self.username])
         res = udp_send_recv(self.bs_ip, self.bs_port, query)
         try:
@@ -112,7 +111,7 @@ class Node:
             os.mkdir(self.dir)
 
         file_names = []
-        with open("data/File Names.txt", 'r') as in_file:
+        with open("File Names.txt", 'r') as in_file:
             for line in in_file:
                 file_names.append(line.strip())
         random.shuffle(file_names)

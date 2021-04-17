@@ -1,4 +1,3 @@
-from __future__ import print_function, unicode_literals
 from art import tprint
 from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
@@ -10,8 +9,12 @@ class NumberValidator(Validator):
         try:
             int(document.text)
         except ValueError:
-            raise ValidationError(message="Please enter a number",
+            raise ValidationError(message="Port Should be a Number",
                                   cursor_position=len(document.text))
+class InputValidator(Validator):
+    def validate(self, document):
+        if (len(document.text)==0):
+            raise ValidationError(message="Film Name Can't Be Empty", cursor_position=len(document.text))          
 
 style = style_from_dict({
     Token.Separator: '#cc5454',
@@ -27,11 +30,11 @@ class CLI:
 
     def collectData(self,commandType):
         if (commandType == 'SEARCH FILE'):
-           answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename'}], style=style)
+           answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename', 'validate': InputValidator}], style=style)
            search_file(answer['filename'], local_search = True)
         
         elif (commandType == 'DOWNLOAD FILE'):
-            answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename'},
+            answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename', 'validate':InputValidator},
                             {'type': 'input','message': 'Enter IP Adress','name': 'ip'},
                             {'type': 'input','message': 'Enter Port','name': 'port', 'validate': NumberValidator}], style=style)
             downloadFile(answer['filename'], answer['ip'], answer['port'])
