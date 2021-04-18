@@ -1,6 +1,6 @@
 import os
 import random
-from utils import query_builder,udp_send_recv
+from utils import query_builder,udp_send_recv,pretty_print_message_to_cli
 import requests
 import configuration as cfg
 
@@ -20,8 +20,9 @@ def downloadFile(filename, ip, port):
         r = requests.get(url, allow_redirects=True)
         filename = filename.replace("-"," ")
         open(f"{cfg.Application['dir']}/{filename}", 'wb').write(r.content)
+        pretty_print_message_to_cli(" Successfully Downloaed File : " + filename)
     except:
-        print("The Resource Does Not Exists")
+        pretty_print_message_to_cli("The Requested Resource Does Not Exist")
 
 def search_file(filename, local_search = False):
     file_name = filename.lower().split(" ")
@@ -42,15 +43,11 @@ def search_file(filename, local_search = False):
     
     if local_search:
         if file_found:
-            print("File Found in the Local Repository")
+            pretty_print_message_to_cli("File Found in the Local Repository")
         else:
             ip = cfg.UdpServer['ip']
             port = cfg.UdpServer['port']
             request = query_builder("SER", [ip,port, filename, 3])  #NO of HOPS = 3
-            udp_send_recv(ip, port, request, recieve=False)
+            return udp_send_recv(ip, port, request, recieve=False)
     else:
         return file_found, " , ".join(file_names)    
-
-
-
-
