@@ -2,7 +2,15 @@ import os
 import socket
 
 from exceptions import MessageLengthError, ResponseError, InvalidQueryError
-from constants import HEADER_LENGTH, BUFFER_SIZE, RESPONSE_CODES
+from constants import HEADER_LENGTH, BUFFER_SIZE, RESPONSE_CODES, END_LINE,CRED,CEND
+
+def pretty_print_list_to_cli(my_list):
+    print(CRED + '\t\t* ' + '\n\t\t* '.join(my_list) + CEND)
+    #print(END_LINE)
+
+def pretty_print_message_to_cli(message):
+    print(CRED + '\t\t' + message + CEND)
+    #print(END_LINE)
 
 
 def query_builder(query_type, data):

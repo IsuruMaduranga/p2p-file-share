@@ -17,7 +17,10 @@ class EndpointAction(object):
 
     def __call__(self, file):
         file = file.replace("-", " ")
-        return send_file(self.dir + "/" + file)
+        if path.exists(self.dir+"/"+file):
+            return send_file(self.dir+"/"+file)
+        else:
+            abort(404)
 
 
 class RESTServer(object):

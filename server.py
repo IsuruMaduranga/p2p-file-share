@@ -5,7 +5,7 @@ from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
 
 from routing import RoutingTable
-from utils import query_builder, udp_send_recv
+from utils import query_builder, udp_send_recv, pretty_print_message_to_cli
 from FileHandler import search_file
 
 import constants as CONST
@@ -67,5 +67,5 @@ class UDPServer:
                     udp_send_recv(node[0], node[1], request, recieve=False)
 
         elif tokens[1] == "SEROK":
-            print(">>>>>  Files Found: ", " ".join(tokens[6:]), " Flask IP: ", tokens[3], " Flask Port: ", tokens[4],
-                  "  <<<<<<")
+            pretty_print_message_to_cli(
+                "Files Found: " + " ".join(tokens[6:]) + " | Flask IP: " + tokens[3] + " | Flask Port: " + tokens[4])

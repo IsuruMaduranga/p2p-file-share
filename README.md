@@ -5,14 +5,26 @@
 1. Java
 2. Python 3+
 
-### Running the Bootstrap server
+### Install Dependencies
 
 ```console
-foo@bar:~/p2p-file-share/BS$ java BootstrapServer
+foo@bar:~/p2p-file-share$ make install
 ```
 
-### Starting a P2P network node
+### Initializing the Network
 
 ```console
-foo@bar:~/p2p-file-share$ python node.py
+foo@bar:~/p2p-file-share$ make init
+```
+
+### Joining to the Network
+
+```console
+foo@bar:~/p2p-file-share$ make join
+```
+
+### Clearing the Resources
+
+```console
+foo@bar:~/p2p-file-share$ make clear
 ```

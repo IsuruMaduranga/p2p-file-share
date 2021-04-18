@@ -1,8 +1,10 @@
 from art import tprint
 from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
-from FileHandler import show_files, search_file, download_file
+from FileHandler import show_files, search_file, downloadFile
 from prompt_toolkit.validation import Validator, ValidationError
+from constants import END_LINE, CRED, CEND
+from utils import pretty_print_list_to_cli
 
 
 class NumberValidator(Validator):
@@ -51,11 +53,14 @@ class CLI:
                 [{'type': 'input', 'message': 'Enter File Name', 'name': 'filename', 'validate': InputValidator},
                  {'type': 'input', 'message': 'Enter IP Adress', 'name': 'ip'},
                  {'type': 'input', 'message': 'Enter Port', 'name': 'port', 'validate': NumberValidator}], style=style)
-            download_file(answer['filename'], answer['ip'], answer['port'])
+            downloadFile(answer['filename'], answer['ip'], answer['port'])
 
         elif command_type == 'SHOW MY FILES':
-            for file in show_files():
-                print(f">> {file}")
+            my_files = show_files()
+            pretty_print_list_to_cli(my_files)
+
+            # for file in show_files():
+            #    print(f"\t* {file}")
 
     def run(self):
         tprint("P2P  File  Share")
