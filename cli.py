@@ -3,6 +3,8 @@ from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
 from FileHandler import show_files, search_file, downloadFile
 from prompt_toolkit.validation import Validator, ValidationError
+from constants import END_LINE,CRED,CEND
+from utils import pretty_print_list_to_cli
 
 class NumberValidator(Validator):
     def validate(self, document):
@@ -26,13 +28,14 @@ style = style_from_dict({
     Token.Question: '',
 })
 
-class CLI:
 
+class CLI:
+   
     def collectData(self,commandType):
         if (commandType == 'SEARCH FILE'):
            answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename', 'validate': InputValidator}], style=style)
            search_file(answer['filename'], local_search = True)
-        
+                
         elif (commandType == 'DOWNLOAD FILE'):
             answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename', 'validate':InputValidator},
                             {'type': 'input','message': 'Enter IP Adress','name': 'ip'},
@@ -40,8 +43,11 @@ class CLI:
             downloadFile(answer['filename'], answer['ip'], answer['port'])
         
         elif (commandType == 'SHOW MY FILES'):
-            for file in show_files():
-                print(f">> {file}")
+            my_files = show_files()
+            pretty_print_list_to_cli(my_files) 
+            
+            #for file in show_files():
+            #    print(f"\t* {file}")
 
     def run(self):
         tprint("P2P  File  Share")        
