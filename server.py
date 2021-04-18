@@ -1,4 +1,6 @@
+import random
 import socket
+import time
 from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
 
@@ -56,6 +58,7 @@ class UDPServer:
             if files_found > 0:
                 response = query_builder("SEROK", [files_found, cfg.FlaskServer['ip'], cfg.FlaskServer['port'], hops,
                                                    file_names])
+                # time.sleep(random.randint(1, 100) / 100)
                 udp_send_recv(tokens[2], tokens[3], response, recieve=False)
 
             elif hops > 0:

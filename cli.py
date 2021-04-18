@@ -38,7 +38,13 @@ class CLI:
             answer = prompt(
                 [{'type': 'input', 'message': 'Enter File Name', 'name': 'filename', 'validate': InputValidator}],
                 style=style)
+            print("Searching files, press [q] to quit.")
             search_file(answer['filename'], local_search=True)
+            while True:
+                if input() == "q":
+                    break
+                if input() == 'r':
+                    search_file(answer['filename'], local_search=True)
 
         elif command_type == 'DOWNLOAD FILE':
             answer = prompt(

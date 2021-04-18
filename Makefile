@@ -1,4 +1,4 @@
-Node_Ids = 1 2 3
+Node_Ids = 1 2 3 4 5 6 7 8 9 10
 Main_Client_Name = Sadil
 Main_Client_UDP_Server_Port = 6500
 Main_Client_Flask_Server_Port = 6000
