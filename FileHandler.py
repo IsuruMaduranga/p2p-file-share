@@ -3,6 +3,8 @@ import random
 from utils import query_builder,udp_send_recv,pretty_print_message_to_cli
 import requests
 import configuration as cfg
+from tqdm import tqdm
+from exceptions import ResourceNotFoundError
 
 def show_files():
     file_names = []
@@ -17,9 +19,16 @@ def downloadFile(filename, ip, port):
     filename = filename.replace(" ","-")
     url = 'http://' + ip + ":" + port + "/" + filename
     try:
-        r = requests.get(url, allow_redirects=True)
-        filename = filename.replace("-"," ")
-        open(f"{cfg.Application['dir']}/{filename}", 'wb').write(r.content)
+        r = requests.get(url, allow_redirects=True, stream=True)
+        if r.status_code == 404:
+            raise ResourceNotFoundError
+        total = int(r.headers.get('content-length', 0))
+        fname = filename.replace("-"," ")
+        fname = f"{cfg.Application['dir']}/{fname}"
+        with open(fname, 'wb') as file, tqdm(desc=fname, total=total, unit='iB', unit_scale=True,unit_divisor=1024,) as bar:
+            for data in r.iter_content(chunk_size=1024):
+                size = file.write(data)
+                bar.update(size)
         pretty_print_message_to_cli(" Successfully Downloaed File : " + filename)
     except:
         pretty_print_message_to_cli("The Requested Resource Does Not Exist")
