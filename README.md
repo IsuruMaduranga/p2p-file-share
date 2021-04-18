@@ -23,7 +23,7 @@ foo@bar:~/p2p-file-share$ make init
 foo@bar:~/p2p-file-share$ make join
 ```
 
-### Clearing the resources
+### Clearing the Resources
 
 ```console
 foo@bar:~/p2p-file-share$ make clear
