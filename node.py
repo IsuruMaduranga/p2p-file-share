@@ -10,6 +10,7 @@ from utils import query_builder, udp_send_recv, query_parser, generate_random_fi
 from routing import RoutingTable
 import configuration as cfg
 
+
 class Node:
 
     def __init__(self):
@@ -19,7 +20,7 @@ class Node:
         self.flask_ip = cfg.FlaskServer['ip']
         self.flask_port = cfg.FlaskServer['port']
         self.username = cfg.Application['name']
-        self.dir =  cfg.Application['dir']
+        self.dir = cfg.Application['dir']
         self.bs_ip = cfg.BoostrapServer['ip']
         self.bs_port = cfg.BoostrapServer['port']
 
@@ -56,7 +57,7 @@ class Node:
 
         query = query_builder("REG", data=[self.udp_ip, self.udp_port, self.username])
         data = udp_send_recv(self.bs_ip, self.bs_port, query)
-        
+
         try:
             res_type, data = query_parser(data)
         except Exception as e:
@@ -79,7 +80,7 @@ class Node:
             pass
 
     def connect_to_network(self):
-        for ip,port in self.routing_table.get():
+        for ip, port in self.routing_table.get():
             query = query_builder("JOIN", data=[self.udp_ip, self.udp_port])
             data = udp_send_recv(ip, port, query)
             try:
@@ -87,23 +88,22 @@ class Node:
             except Exception as e:
                 print("Error:", str(e))
                 self.routing_table.remove((ip, port))
-            else: 
+            else:
                 if res_type == "JOINOK":
                     pass
-                   
 
     def disconnect_from_network(self):
-        for ip,port in self.routing_table.get():
+        for ip, port in self.routing_table.get():
             query = query_builder("LEAVE", data=[self.udp_ip, self.udp_port])
             data = udp_send_recv(ip, port, query)
             try:
                 res_type, data = query_parser(data)
             except Exception as e:
                 print("Error:", str(e))
-            else: 
+            else:
                 if res_type == "LEAVEOK":
                     pass
-    
+
     def generate_files(self, num_files):
         if os.path.isdir(self.dir):
             print("path already exist")
@@ -118,6 +118,7 @@ class Node:
 
         for i in range(num_files):
             generate_random_file(self.dir, file_names[i], random.randint(2, 10))
+
 
 if __name__ == "__main__":
     args = sys.argv[1:]

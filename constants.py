@@ -13,7 +13,8 @@ RESPONSE_CODES = {
     },
     "UNROK": {
         "0": {"stat": True, "msg": "successful"},
-        "9999": {"stat": False, "msg": "error while unregistering. IP and port may not be in the registry or command is incorrect."}
+        "9999": {"stat": False,
+                 "msg": "error while unregistering. IP and port may not be in the registry or command is incorrect."}
     },
     "JOINOK": {
         "0": {"stat": True, "msg": "successful"},
@@ -24,7 +25,7 @@ RESPONSE_CODES = {
         "9999": {"stat": False, "msg": "error while removing node from routing table"}
     },
     "SEROK": {
-        "1": {"stat": True, "msg": "successful"}, # the key can be <=1 , thats why,  the key is number of files found 
+        "1": {"stat": True, "msg": "successful"},  # the key can be <=1 , thats why,  the key is number of files found
         "2": {"stat": True, "msg": "successful"},
         "3": {"stat": True, "msg": "successful"},
         "4": {"stat": True, "msg": "successful"},

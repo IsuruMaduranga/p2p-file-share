@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from routing import RoutingTable
 from utils import query_builder, udp_send_recv
-from FileHandler import search_file 
+from FileHandler import search_file
 
 import constants as CONST
 import configuration as cfg
@@ -54,13 +54,15 @@ class UDPServer:
             files_found, file_names = search_file(tokens[4])
 
             if files_found > 0:
-                response = query_builder("SEROK", [files_found, cfg.FlaskServer['ip'], cfg.FlaskServer['port'], hops, file_names])
+                response = query_builder("SEROK", [files_found, cfg.FlaskServer['ip'], cfg.FlaskServer['port'], hops,
+                                                   file_names])
                 udp_send_recv(tokens[2], tokens[3], response, recieve=False)
 
             elif hops > 0:
-                request = query_builder("SER", [tokens[2], tokens[3], tokens[4], hops-1])
+                request = query_builder("SER", [tokens[2], tokens[3], tokens[4], hops - 1])
                 for node in self.routing_table.get():
                     udp_send_recv(node[0], node[1], request, recieve=False)
-        
+
         elif tokens[1] == "SEROK":
-            print(">>>>>  Files Found: ", " ".join(tokens[6:]), " Flask IP: ", tokens[3], " Flask Port: ", tokens[4], "  <<<<<<")
+            print(">>>>>  Files Found: ", " ".join(tokens[6:]), " Flask IP: ", tokens[3], " Flask Port: ", tokens[4],
+                  "  <<<<<<")

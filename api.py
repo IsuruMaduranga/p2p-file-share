@@ -12,12 +12,12 @@ log.setLevel(logging.ERROR)
 
 # return the requested file
 class EndpointAction(object):
-    def __init__(self,  dir):
-        self.dir = dir
+    def __init__(self, directory):
+        self.dir = directory
 
     def __call__(self, file):
         file = file.replace("-", " ")
-        return send_file(self.dir+"/"+file)
+        return send_file(self.dir + "/" + file)
 
 
 class RESTServer(object):
@@ -33,7 +33,7 @@ class RESTServer(object):
 
     # start the flask server on separate thread
     def async_run(self):
-        self.app.run(host = self.ip, port = self.port)
+        self.app.run(host=self.ip, port=self.port)
 
     def run(self):
         self.server_process.start()
