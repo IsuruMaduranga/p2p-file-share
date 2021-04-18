@@ -1,8 +1,9 @@
 import sys
 import logging
-from flask import Flask, Response, request, send_file
+from flask import Flask, Response, request, send_file, abort
 from multiprocessing import Process
 import configuration as cfg
+from os import path
 
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
@@ -17,7 +18,10 @@ class EndpointAction(object):
 
     def __call__(self, file):
         file = file.replace("-", " ")
-        return send_file(self.dir+"/"+file)
+        if path.exists(self.dir+"/"+file):
+            return send_file(self.dir+"/"+file)
+        else:
+            abort(404)
 
 
 class RESTServer(object):
