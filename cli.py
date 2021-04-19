@@ -6,13 +6,6 @@ from prompt_toolkit.validation import Validator, ValidationError
 from constants import END_LINE,CRED,CEND
 from utils import pretty_print_list_to_cli
 
-class NumberValidator(Validator):
-    def validate(self, document):
-        try:
-            int(document.text)
-        except ValueError:
-            raise ValidationError(message="Port Should be a Number",
-                                  cursor_position=len(document.text))
 class InputValidator(Validator):
     def validate(self, document):
         if (len(document.text)==0):
@@ -37,10 +30,8 @@ class CLI:
            search_file(answer['filename'], local_search = True)
                 
         elif (commandType == 'DOWNLOAD FILE'):
-            answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename', 'validate':InputValidator},
-                            {'type': 'input','message': 'Enter IP Adress','name': 'ip'},
-                            {'type': 'input','message': 'Enter Port','name': 'port', 'validate': NumberValidator}], style=style)
-            downloadFile(answer['filename'], answer['ip'], answer['port'])
+            answer = prompt([{'type': 'input','message': 'Enter File Name','name': 'filename', 'validate':InputValidator}], style=style)
+            downloadFile(answer['filename'])
         
         elif (commandType == 'SHOW MY FILES'):
             my_files = show_files()
