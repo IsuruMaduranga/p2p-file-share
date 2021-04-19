@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from routing import RoutingTable
 from utils import query_builder, udp_send_recv
 from FileHandler import search_file 
+from threading import Lock
 
 import constants as CONST
 
@@ -20,7 +21,7 @@ class UDPServer:
         self.server.bind((self.ip, self.port))
         self.server_process = Process(target=self._start)
         self.routing_table = RoutingTable()
-        self.filmList = []
+        self.lock = Lock()
 
     def run(self):
         self.server_process.start()
@@ -66,12 +67,21 @@ class UDPServer:
         
         elif tokens[1] == "SEROK":
             dir = cfg.Application['dir'] 
-            f = open(f"{dir}/film_details.txt", "a")
-
             films = " ".join(tokens[6:]).strip()
+
+            self.lock.acquire()
+            f = open(f"{dir}/film_details.txt", "a")
+            file1 = open(f"{dir}/film_details.txt")
+
             for film in films.split(','):
-                if film not in self.filmList:
-                    self.filmList.append(film)
+                found = False
+                for line in file1.readlines():
+                    if film in line:
+                        found = True
+                if not found:
                     print(f"\t* {film}")
                     f.write(f"{film}|{tokens[3]}|{tokens[4]}\n")
+                    
             f.close()
+            file1.close()
+            self.lock.release()
