@@ -20,6 +20,7 @@ class UDPServer:
         self.server.bind((self.ip, self.port))
         self.server_process = Process(target=self._start)
         self.routing_table = RoutingTable()
+        self.filmList = []
 
     def run(self):
         self.server_process.start()
@@ -64,4 +65,13 @@ class UDPServer:
                     udp_send_recv(node[0], node[1], request, recieve=False)
         
         elif tokens[1] == "SEROK":
-            pretty_print_message_to_cli("Files Found: " + " ".join(tokens[6:]) + " | Flask IP: "+ tokens[3]+ " | Flask Port: "+ tokens[4])
+            dir = cfg.Application['dir'] 
+            f = open(f"{dir}/film_details.txt", "a")
+
+            films = " ".join(tokens[6:]).strip()
+            for film in films.split(','):
+                if film not in self.filmList:
+                    self.filmList.append(film)
+                    pretty_print_message_to_cli(film)
+                    f.write(f"{film}|{tokens[3]}|{tokens[4]}\n")
+            f.close()

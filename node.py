@@ -109,6 +109,9 @@ class Node:
             print("path already exist")
         else:
             os.mkdir(self.dir)
+            f = open(f"{self.dir}/film_details.txt", "w")
+            f.close()
+
 
         file_names = []
         with open("File Names.txt", 'r') as in_file:
