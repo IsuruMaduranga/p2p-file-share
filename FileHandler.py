@@ -64,9 +64,13 @@ def search_file(filename, local_search = False):
         if file_found:
             print(">>>>> File Found in the Local Repository")
         else:
+            dir = cfg.Application['dir']
+            f = open(f"{dir}/film_details.txt", "w")
+            f.truncate()
+            f.close()
             ip = cfg.UdpServer['ip']
             port = cfg.UdpServer['port']
             request = query_builder("SER", [ip,port, filename, 3])  #NO of HOPS = 3
             return udp_send_recv(ip, port, request, recieve=False)
     else:
-        return file_found, ",".join(file_names)    
+        return file_found, ",".join(file_names)
