@@ -3,8 +3,6 @@ from PyInquirer import style_from_dict, Token, prompt, Separator
 from pprint import pprint
 from FileHandler import show_files, search_file, downloadFile
 from prompt_toolkit.validation import Validator, ValidationError
-from constants import END_LINE,CRED,CEND
-from utils import pretty_print_list_to_cli
 
 class InputValidator(Validator):
     def validate(self, document):
@@ -35,10 +33,8 @@ class CLI:
         
         elif (commandType == 'SHOW MY FILES'):
             my_files = show_files()
-            pretty_print_list_to_cli(my_files) 
-            
-            #for file in show_files():
-            #    print(f"\t* {file}")
+            for file in my_files:
+                print(f"\t* {file}") 
 
     def run(self):
         tprint("P2P  File  Share")        

@@ -1,6 +1,6 @@
 import os
 import random
-from utils import query_builder,udp_send_recv,pretty_print_message_to_cli
+from utils import query_builder,udp_send_recv
 import requests
 import configuration as cfg
 from tqdm import tqdm
@@ -12,6 +12,8 @@ def show_files():
     if os.path.exists(dir):
         available_files = os.listdir(dir)
         for file in available_files:
+            if file=="film_details.txt":
+                continue
             file_names.append(file)
     return file_names
 
@@ -34,12 +36,12 @@ def downloadFile(filename):
                     for data in r.iter_content(chunk_size=1024):
                         size = file.write(data)
                         bar.update(size)
-                pretty_print_message_to_cli(" Successfully Downloaed File : " + filename)
+                print(">>>>> Successfully Downloaed File : " + filename)
                 return ""
             except:
                 continue
 
-    pretty_print_message_to_cli("The Requested Resource Does Not Exist")
+    print("!!!! The Requested Resource Does Not Exist !!!!!")
 
 def search_file(filename, local_search = False):
     file_name = filename.lower().split(" ")
@@ -60,7 +62,7 @@ def search_file(filename, local_search = False):
     
     if local_search:
         if file_found:
-            pretty_print_message_to_cli("File Found in the Local Repository")
+            print(">>>>> File Found in the Local Repository")
         else:
             ip = cfg.UdpServer['ip']
             port = cfg.UdpServer['port']

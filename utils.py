@@ -2,16 +2,7 @@ import os
 import socket
 
 from exceptions import MessageLengthError, ResponseError, InvalidQueryError
-from constants import HEADER_LENGTH, BUFFER_SIZE, RESPONSE_CODES, END_LINE,CRED,CEND
-
-def pretty_print_list_to_cli(my_list):
-    print(CRED + '\t\t* ' + '\n\t\t* '.join(my_list) + CEND)
-    #print(END_LINE)
-
-def pretty_print_message_to_cli(message):
-    print(CRED + '\t\t' + message + CEND)
-    #print(END_LINE)
-
+from constants import HEADER_LENGTH, BUFFER_SIZE, RESPONSE_CODES
 
 def query_builder(query_type, data):
     query = " " + " ".join([query_type] + list(map(str, data)))
@@ -84,8 +75,3 @@ def generate_random_file(dir,file_name, file_size):
     if os.path.exists(dir):
         with open(os.path.join(dir + "/" + file_name), "wb") as out_file:
             out_file.write(random_integer)
-
-if __name__ == "__main__":
-    # quick unit tests
-    print(query_builder("REG", ["129.82.123.45", "5001", "1234abcd"]).decode("utf-8"))
-    print(query_builder("REGOK", ["2", "129.82.123.45", "5001", "64.12.123.190", "34001"]).decode("utf-8"))

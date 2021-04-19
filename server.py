@@ -3,7 +3,7 @@ from multiprocessing import Process
 from concurrent.futures import ThreadPoolExecutor
 
 from routing import RoutingTable
-from utils import query_builder, udp_send_recv, pretty_print_message_to_cli
+from utils import query_builder, udp_send_recv
 from FileHandler import search_file 
 
 import constants as CONST
@@ -72,6 +72,6 @@ class UDPServer:
             for film in films.split(','):
                 if film not in self.filmList:
                     self.filmList.append(film)
-                    pretty_print_message_to_cli(film)
+                    print("            ",film)
                     f.write(f"{film}|{tokens[3]}|{tokens[4]}\n")
             f.close()
