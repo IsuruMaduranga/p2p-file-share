@@ -72,6 +72,6 @@ class UDPServer:
             for film in films.split(','):
                 if film not in self.filmList:
                     self.filmList.append(film)
-                    print("            ",film)
+                    print(f"\t* {film}")
                     f.write(f"{film}|{tokens[3]}|{tokens[4]}\n")
             f.close()
