@@ -53,15 +53,16 @@ class UDPServer:
             udp_send_recv(addr[0], addr[1], response, recieve=False)
 
         elif tokens[1] == "SER":
-            hops = int(tokens[5])
-            files_found, file_names = search_file(tokens[4])
+            hops = int(tokens[-1])
+            file_name = " ".join(tokens[4:-1])
+            files_found, file_names = search_file(file_name)
 
             if files_found > 0:
                 response = query_builder("SEROK", [files_found, cfg.FlaskServer['ip'], cfg.FlaskServer['port'], hops, file_names])
                 udp_send_recv(tokens[2], tokens[3], response, recieve=False)
 
             elif hops > 0:
-                request = query_builder("SER", [tokens[2], tokens[3], tokens[4], hops-1])
+                request = query_builder("SER", [tokens[2], tokens[3], file_name, hops-1])
                 for node in self.routing_table.get():
                     udp_send_recv(node[0], node[1], request, recieve=False)
         
